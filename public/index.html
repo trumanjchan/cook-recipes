@@ -229,24 +229,47 @@
                 displayMyChallenges();
             })
 
+            async function getSignature(nick) {
+                const res = await fetch(`/api/sign-upload?nick=${nick}`);
+                return await res.json();
+            }
+
             socket.on('logged-in', (nickname) => {
                 verified = true;
                 nick = nickname;
+
                 document.getElementById("loginForm").style.display = "none";
-                document.getElementById("challengeForm").innerHTML = `<button id="upload_widget" class="cloudinary-button">Upload Photos</button>`;
-                var myWidget = cloudinary.createUploadWidget({
-                    cloudName: 'dmsiazttp',
-                    uploadPreset: 'cookrecipes',
-                    sources: ['local']}, (error, result) => {
+                document.getElementById("challengeForm").innerHTML = `
+                    <button id="upload_widget" class="cloudinary-button">Upload Photos</button>
+                    <div id="uploaded_image"></div>
+                `;
+                document.getElementById("upload_widget").addEventListener("click", async function() {
+                    const signatureData = await getSignature(nick);
+
+                    const widget = cloudinary.createUploadWidget({
+                        cloudName: signatureData.cloudName,
+                        apiKey: signatureData.apiKey,
+                        uploadSignature: signatureData.signature,
+                        uploadSignatureTimestamp: signatureData.timestamp,
+                        folder: signatureData.folder,
+                        sources: ['local']
+                    }, (error, result) => {
                         if (!error && result && result.event === "success") {
-                            console.log('Done! Here is the image info: ', result.info);
+                            console.log('Uploaded:', result.info.secure_url);
+
+                            const imageUrl = result.info.secure_url;
+                            document.getElementById("uploaded_image").innerHTML = `
+                                <img src="${imageUrl}" alt="Uploaded image" style="max-width: 300px;"/>
+                            `;
                         }
-                    }
-                )
-                document.getElementById("upload_widget").addEventListener("click", function() {
-                    myWidget.open();
+                    });
+
+                    widget.open();
                 }, false);
-                document.getElementById("welcome").innerHTML = `<div>Welcome, ${nick}!</div><button onclick="deleteAccount()">Delete Account</button>`;
+                document.getElementById("welcome").innerHTML = `
+                    <div>Welcome, ${nick}!</div>
+                    <button onclick="deleteAccount()">Delete Account</button>
+                `;
 
                 displayUsersList();
                 displayMyChallenges();

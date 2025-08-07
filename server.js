@@ -1,5 +1,6 @@
 import express from 'express';
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
+import cloudinary from './public/cloudinary.js';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -37,6 +38,30 @@ const saltRounds = 10;
         }
 
         app.use(express.static('public'));
+
+        app.get('/api/sign-upload', (req, res) => {
+            const timestamp = Math.round((new Date()).getTime() / 1000);
+            const folder = req.query.nick;
+
+            const paramsToSign = {
+                timestamp,
+                folder,
+                source: 'uw'
+            };
+
+            const signature = cloudinary.utils.api_sign_request(
+                paramsToSign,
+                cloudinary.config().api_secret
+            );
+
+            res.json({
+                signature,
+                timestamp,
+                folder,
+                apiKey: cloudinary.config().api_key,
+                cloudName: cloudinary.config().cloud_name
+            });
+        });
 
         app.get('/', (req, res) => {
             res.sendFile(join(__dirname, 'public/index.html'));
