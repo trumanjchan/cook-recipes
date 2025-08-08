@@ -46,7 +46,10 @@ const saltRounds = 10;
             const paramsToSign = {
                 timestamp,
                 folder,
-                source: 'uw'
+                source: 'uw',
+                use_filename: true,
+                unique_filename: false,
+                overwrite: true,
             };
 
             const signature = cloudinary.utils.api_sign_request(
@@ -58,6 +61,9 @@ const saltRounds = 10;
                 signature,
                 timestamp,
                 folder,
+                use_filename: true,
+                unique_filename: false,
+                overwrite: true,
                 apiKey: cloudinary.config().api_key,
                 cloudName: cloudinary.config().cloud_name
             });

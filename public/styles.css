@@ -42,10 +42,12 @@ body {
                 height: 20vh;
             }
 
-            #uploaded_images {
-                display: flex;
-                flex-direction: row;
+            #uploaded-images {
                 overflow-x: auto;
+            }
+
+            #uploaded-images-object {
+                overflow-x: scroll;
             }
         }
     }

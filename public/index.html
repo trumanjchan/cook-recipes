@@ -256,6 +256,9 @@
                         uploadSignature: signatureData.signature,
                         uploadSignatureTimestamp: signatureData.timestamp,
                         folder: signatureData.folder,
+                        use_filename: true,
+                        unique_filename: false,
+                        overwrite: true,
                         sources: ['local']
                     }, (error, result) => {
                         if (!error && result && result.event === "success") {
@@ -263,12 +266,16 @@
                             const imageUrl = result.info.secure_url;
                             uploadedImgs[imageName] = imageUrl;
 
-                            const img = document.createElement("img");
-                            img.src = imageUrl;
-                            img.alt = "Uploaded image";
-                            img.style.maxWidth = "150px";
-                            img.style.display = "block";
-                            document.getElementById("uploaded-images").appendChild(img);
+                            document.getElementById("uploaded-images").innerHTML = "";
+                            for (const name in uploadedImgs) {
+                                const img = document.createElement("img");
+                                img.src = uploadedImgs[name];
+                                img.alt = "Uploaded image";
+                                img.style.maxWidth = "150px";
+                                img.style.display = "block";
+                                document.getElementById("uploaded-images").appendChild(img);
+                            }
+
                             document.getElementById("uploaded-images-object").textContent = JSON.stringify(Object.keys(uploadedImgs), null, 2);
                         }
                     });
