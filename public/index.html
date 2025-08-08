@@ -41,6 +41,7 @@
             const socket = io();
             var verified = false;
             var nick = '';
+            const uploadedImgs = {};
 
             document.getElementById('loginForm').addEventListener('submit', (event) => {
                 event.preventDefault();
@@ -240,8 +241,11 @@
 
                 document.getElementById("loginForm").style.display = "none";
                 document.getElementById("challengeForm").innerHTML = `
+                    <div style="text-decoration: underline;">Record a new recipe</div>
+                    <textarea id="new-recipe-textarea" style="width: 100%; box-sizing: border-box;"></textarea>
                     <button id="upload_widget" class="cloudinary-button">Upload Photos</button>
-                    <div id="uploaded_image"></div>
+                    <div id="uploaded-images"></div>
+                    <pre id="uploaded-images-object"></pre>
                 `;
                 document.getElementById("upload_widget").addEventListener("click", async function() {
                     const signatureData = await getSignature(nick);
@@ -255,12 +259,17 @@
                         sources: ['local']
                     }, (error, result) => {
                         if (!error && result && result.event === "success") {
-                            console.log('Uploaded:', result.info.secure_url);
-
+                            const imageName = result.info.display_name;
                             const imageUrl = result.info.secure_url;
-                            document.getElementById("uploaded_image").innerHTML = `
-                                <img src="${imageUrl}" alt="Uploaded image" style="max-width: 300px;"/>
-                            `;
+                            uploadedImgs[imageName] = imageUrl;
+
+                            const img = document.createElement("img");
+                            img.src = imageUrl;
+                            img.alt = "Uploaded image";
+                            img.style.maxWidth = "150px";
+                            img.style.display = "block";
+                            document.getElementById("uploaded-images").appendChild(img);
+                            document.getElementById("uploaded-images-object").textContent = JSON.stringify(Object.keys(uploadedImgs), null, 2);
                         }
                     });
 

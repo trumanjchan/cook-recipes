@@ -6,7 +6,8 @@ body {
 
     .info-container {
         width: 25%;
-        margin: 20px;
+        padding: 20px;
+        overflow-y: auto;
 
         #loginForm>div,
         #challengeForm>div {
@@ -32,6 +33,18 @@ body {
                 padding: 5px 10px;
                 background: #eee;
                 border: 1px solid black;
+                overflow-x: auto;
+            }
+        }
+
+        #challengeForm {
+            #new-recipe-textarea {
+                height: 20vh;
+            }
+
+            #uploaded_images {
+                display: flex;
+                flex-direction: row;
                 overflow-x: auto;
             }
         }
@@ -122,6 +135,7 @@ body {
         .info-container {
             width: initial;
             margin: 20px;
+            overflow-y: initial;
         }
 
         .challenges-container {
