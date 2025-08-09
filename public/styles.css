@@ -10,7 +10,7 @@ body {
         overflow-y: auto;
 
         #loginForm>div,
-        #challengeForm>div {
+        #recipeForm>div {
             display: flex;
             flex-direction: column;
         }
@@ -37,9 +37,16 @@ body {
             }
         }
 
-        #challengeForm {
-            #new-recipe-textarea {
+        #recipeForm {
+            #new-recipe-title {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #new-recipe-instructions {
                 height: 20vh;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             #uploaded-images {
@@ -77,7 +84,7 @@ body {
             height: 100%;
             overflow-y: auto;
 
-            .challenge {
+            .new-recipe {
                 width: 80%;
                 margin: 30px auto;
                 text-align: center;

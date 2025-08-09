@@ -155,9 +155,17 @@ const saltRounds = 10;
                 });
             });
 
-            socket.on('challenge', async (data) => {
+            socket.on('new-recipe', async (data) => {
                 try {
-                    const [opponentId] = await db.promise().query(`SELECT * FROM users WHERE name = ?`, [data.opponentInput]);
+                    await db.promise().query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), getTimestamp()]);
+                    console.log(data.OP + " shared recipe: " + data.titleInput);
+
+                    //socket.emit('display-my-challenges');
+                    //socket.broadcast.emit('display-my-challenges');
+                    //socket.emit('create-challenge-success');
+                    io.emit('server-announcement', `${data.OP} shared recipe: ${data.titleInput}`);
+
+                    /*const [opponentId] = await db.promise().query(`SELECT * FROM users WHERE name = ?`, [data.opponentInput]);
                     if (opponentId[0].id && data.opponentInput !== data.poster) {
                         const [challengeId] = await db.promise().query(`INSERT INTO challenges (title, activity, time) VALUES (?, ?, ?)`, [data.titleInput, data.activityInput, getTimestamp()]);
 
@@ -170,16 +178,17 @@ const saltRounds = 10;
                         socket.broadcast.emit('display-my-challenges');
                         socket.emit('create-challenge-success');
                         io.emit('server-announcement', `${data.poster} challenged ${data.opponentInput} to ${data.titleInput}!`);
-                        console.log("inserted challenge: " + data.titleInput);
+                        console.log("inserted new recipe: " + data.titleInput);
                         console.log("inserted challenge_user for poster " + data.poster);
                         console.log("inserted challenge_user for opponent " + data.opponentInput);
                     } else {
                         socket.emit('create-challenge-error', "Challenging yourself is not a feature of this app. Challenge and compete with your friend!");
                         console.log("Challenging yourself is not a feature of this app. Challenge and compete with your friend!");
-                    }
+                    }*/
                 } catch (err) {
-                    socket.emit('create-challenge-error', "Please enter a valid opponent username!");
-                    console.log("Please enter a valid opponent username!");
+                    console.log(err);
+                    /*socket.emit('create-challenge-error', "Please enter a valid opponent username!");
+                    console.log("Please enter a valid opponent username!");*/
                 }
             })
 

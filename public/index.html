@@ -20,7 +20,7 @@
 
             <div id="welcome"></div>
             <div id="all-users"></div>
-            <form id="challengeForm"></form>
+            <form id="recipeForm"></form>
         </div>
 
         <div class="challenges-container">
@@ -86,17 +86,16 @@
                 }
             })
 
-            document.getElementById('challengeForm').addEventListener('submit', (event) => {
+            document.getElementById('recipeForm').addEventListener('submit', (event) => {
                 event.preventDefault();
 
                 if (verified) {
-                    /*const titleInput = document.getElementById('title').value;
-                    const activityInput = document.getElementById('activity').value;
-                    const poster = nick;
-                    const opponentInput = document.getElementById('opponent').value;
+                    const OP = nick;
+                    const titleInput = document.getElementById('new-recipe-title').value;
+                    const instructionsInput = document.getElementById('new-recipe-instructions').value;
                     document.getElementById('challengeErrors').innerHTML = '';
 
-                    socket.emit('challenge', { titleInput, activityInput, poster, opponentInput });*/
+                    socket.emit('new-recipe', { OP, titleInput, instructionsInput, uploadedImgs });
                 }
             })
 
@@ -240,12 +239,16 @@
                 nick = nickname;
 
                 document.getElementById("loginForm").style.display = "none";
-                document.getElementById("challengeForm").innerHTML = `
-                    <div style="text-decoration: underline;">Record a new recipe</div>
-                    <textarea id="new-recipe-textarea" style="width: 100%; box-sizing: border-box;"></textarea>
-                    <button id="upload_widget" class="cloudinary-button">Upload Photos</button>
-                    <div id="uploaded-images"></div>
-                    <pre id="uploaded-images-object"></pre>
+                document.getElementById("recipeForm").innerHTML = `
+                    <div>
+                        <textarea id="new-recipe-title" placeholder="Recipe Name" required></textarea>
+                        <textarea id="new-recipe-instructions" placeholder="[finalimgname]\n\nStep 1) Boil water\n[imgname1]\n\nStep 2) Cook noodles to al dente\n[imgname2]\n\netc." required ></textarea>
+                        <button type="button" id="upload_widget" class="cloudinary-button">Upload Photos</button>
+                        <button type="submit">Submit Recipe</button>
+                        <div id="uploaded-images"></div>
+                        <pre id="uploaded-images-object"></pre>
+                    </div>
+                    <div id="challengeErrors"></div>
                 `;
                 document.getElementById("upload_widget").addEventListener("click", async function() {
                     const signatureData = await getSignature(nick);
@@ -288,7 +291,7 @@
                 `;
 
                 displayUsersList();
-                displayMyChallenges();
+                //displayMyChallenges();
             })
         </script>
     </body>

@@ -41,6 +41,7 @@ export const connectToDB = () => {
 			const createRecipesTableSQL = `
 				CREATE TABLE IF NOT EXISTS recipes (
 					id INT AUTO_INCREMENT PRIMARY KEY,
+					OP VARCHAR(20) CHARACTER SET utf8mb4 NOT NULL, 
 					title VARCHAR(64),
 					instructions TEXT,
 					image_urls VARCHAR(500),
