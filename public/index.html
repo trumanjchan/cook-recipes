@@ -23,9 +23,9 @@
             <form id="recipeForm"></form>
         </div>
 
-        <div class="challenges-container">
+        <div class="recipes-container">
             <div class="fade top"></div>
-            <div id="my-challenges"></div>
+            <div id="my-recipes"></div>
             <div class="fade bot"></div>
         </div>
 
@@ -93,7 +93,7 @@
                     const OP = nick;
                     const titleInput = document.getElementById('new-recipe-title').value;
                     const instructionsInput = document.getElementById('new-recipe-instructions').value;
-                    document.getElementById('challengeErrors').innerHTML = '';
+                    document.getElementById('recipeErrors').innerHTML = '';
 
                     socket.emit('new-recipe', { OP, titleInput, instructionsInput, uploadedImgs });
                 }
@@ -132,65 +132,55 @@
                     .catch(error => console.error(`Error fetching /all-users :`, error));
             }
 
-            function displayMyChallenges() {
+            function displayMyRecipes() {
                 if (verified) {
-                    fetch(`/${nick}/challenges`)
+                    fetch(`/${nick}/recipes`)
                         .then(response => response.json())
                         .then(data => {
-                            console.log(data)
-                            const myChallenges = document.getElementById('my-challenges');
-                            myChallenges.innerHTML = '';
+                            console.log(data);
 
-                            data.reverse().forEach(challenge => {
+                            const myRecipes = document.getElementById('my-recipes');
+                            myRecipes.innerHTML = '';
+
+                            data.reverse().forEach(recipe => {
                                 let container = document.createElement('div');
-                                container.className = "challenge";
-
-                                const poster = challenge.players.find(item => item.role === "poster");
-                                const opponent = challenge.players.find(item => item.role === "opponent");
+                                container.className = "recipe";
 
                                 let div1 = document.createElement('div');
-                                div1.textContent = challenge.title;
+                                div1.textContent = recipe.title;
                                 div1.className = "title";
                                 container.appendChild(div1);
 
                                 let div2 = document.createElement('div');
-                                div2.textContent = challenge.activity;
-                                div2.className = "activity";
+                                div2.textContent = recipe.OP;
+                                div2.className = "OP";
                                 container.appendChild(div2);
 
                                 let div3 = document.createElement('div');
-                                const date = new Date(challenge.time);
+                                const date = new Date(recipe.time);
                                 const localTz = date.toLocaleString();
                                 div3.textContent = localTz;
                                 div3.className = "time";
                                 container.appendChild(div3);
 
-                                let div4 = document.createElement('div');
-                                div4.textContent = poster.name + " challenged " + opponent.name;
-                                div4.className = "by";
-                                container.appendChild(div4);
+                                let pre = document.createElement('pre');
+                                pre.textContent = recipe.instructions;
+                                pre.className = "instructions";
+                                container.appendChild(pre);
 
-                                if (!challenge.inProgress[0] || challenge.inProgress[0].name !== nick) {
+                                /*if (!recipe.inProgress[0] || recipe.inProgress[0].name !== nick) {
                                     let button = document.createElement('button');
                                     button.innerHTML = "Done";
                                     button.onclick = function() {
-                                        challengeDone(challenge.title);
+                                        challengeDone(recipe.title);
                                     };
                                     container.appendChild(button);
-                                }
+                                }*/
 
-                                if (challenge.inProgress[0]) {
-                                    let div5 = document.createElement('div');
-                                    const date = new Date(challenge.inProgress[0].time);
-                                    const localTz = date.toLocaleString();
-                                    div5.textContent = "Completed by " + challenge.inProgress[0].name + " - " + localTz;
-                                    container.appendChild(div5);
-                                }
-
-                                myChallenges.appendChild(container);
+                                myRecipes.appendChild(container);
                             });
                         })
-                        .catch(error => console.error(`Error fetching /${nick}/challenges :`, error));
+                        .catch(error => console.error(`Error fetching /${nick}/recipes :`, error));
                 }
             }
 
@@ -217,16 +207,16 @@
                 document.getElementById('opponent').value = '';
             })
 
-            socket.on('create-challenge-error', (msg) => {
-                document.getElementById('challengeErrors').innerHTML = msg;
+            socket.on('create-recipe-error', (msg) => {
+                document.getElementById('recipeErrors').innerHTML = msg;
             })
 
             socket.on('display-all-users', () => {
                 displayUsersList();
             })
 
-            socket.on('display-my-challenges', () => {
-                displayMyChallenges();
+            socket.on('display-my-recipes', () => {
+                displayMyRecipes();
             })
 
             async function getSignature(nick) {
@@ -248,7 +238,7 @@
                         <div id="uploaded-images"></div>
                         <pre id="uploaded-images-object"></pre>
                     </div>
-                    <div id="challengeErrors"></div>
+                    <div id="recipeErrors"></div>
                 `;
                 document.getElementById("upload_widget").addEventListener("click", async function() {
                     const signatureData = await getSignature(nick);
@@ -291,7 +281,7 @@
                 `;
 
                 displayUsersList();
-                //displayMyChallenges();
+                displayMyRecipes();
             })
         </script>
     </body>

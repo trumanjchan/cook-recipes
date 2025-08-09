@@ -79,30 +79,11 @@ const saltRounds = 10;
             });
         });
 
-        app.get('/:nickname/challenges', async (req, res) => {
+        app.get('/:nickname/recipes', async (req, res) => {
             try {
-                const [userResults] = await db.promise().query(`SELECT id FROM users WHERE name = ?`, [req.params.nickname]);
-                let userId = userResults[0].id;
+                const [userRecipes] = await db.promise().query(`SELECT * FROM recipes WHERE OP = ?`, [req.params.nickname]);
 
-                const [userChallenges] = await db.promise().query(`SELECT * FROM challenge_user WHERE user_id = ?`, [userId]);
-                let challengeIds = userChallenges.map(row => row.challenge_id);
-
-                const fullData = await Promise.all(
-                    challengeIds.map(async (challengeId) => {
-                        const [challengeResults] = await db.promise().query(`SELECT * FROM challenges WHERE id = ?`, [challengeId]);
-
-                        let id = challengeResults[0].id;
-                        let title = challengeResults[0].title;
-                        let activity = challengeResults[0].activity;
-                        let time = challengeResults[0].time;
-                        const [playerResults] = await db.promise().query(`SELECT u.name, cu.role FROM challenge_user cu JOIN users u ON cu.user_id = u.id WHERE cu.challenge_id = ?`, [id]);
-                        const [inProgress] = await db.promise().query(`SELECT name, time FROM in_progress WHERE challenge_id = ?`, [challengeId]);
-
-                        return { title, activity, time, players: playerResults, inProgress };
-                    })
-                );
-
-                res.json(fullData);
+                res.json(userRecipes);
             } catch (err) {
                 console.error(err);
                 res.status(500).json({ error: 'Something went wrong' });
@@ -160,8 +141,8 @@ const saltRounds = 10;
                     await db.promise().query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), getTimestamp()]);
                     console.log(data.OP + " shared recipe: " + data.titleInput);
 
-                    //socket.emit('display-my-challenges');
-                    //socket.broadcast.emit('display-my-challenges');
+                    socket.emit('display-my-recipes');
+                    //socket.broadcast.emit('display-my-recipes');
                     //socket.emit('create-challenge-success');
                     io.emit('server-announcement', `${data.OP} shared recipe: ${data.titleInput}`);
 
@@ -187,8 +168,7 @@ const saltRounds = 10;
                     }*/
                 } catch (err) {
                     console.log(err);
-                    /*socket.emit('create-challenge-error', "Please enter a valid opponent username!");
-                    console.log("Please enter a valid opponent username!");*/
+                    socket.emit('create-recipe-error', err);
                 }
             })
 

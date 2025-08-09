@@ -59,7 +59,7 @@ body {
         }
     }
 
-    .challenges-container {
+    .recipes-container {
         width: 50%;
         background: linear-gradient(#9198e5, #b181ff, #d891ef);
         position: relative;
@@ -80,18 +80,17 @@ body {
             }
         }
 
-        #my-challenges {
+        #my-recipes {
             height: 100%;
             overflow-y: auto;
 
-            .new-recipe {
+            .recipe {
                 width: 80%;
                 margin: 30px auto;
-                text-align: center;
                 padding: 10px;
-                background: rgba(255, 255, 255, 0.75);
+                background: rgba(255, 255, 255, 0.5);
                 box-shadow: 0 8px 25px 0 rgba(0, 0, 0, 0.3);
-                border-radius: 35px;
+                border-radius: 15px;
 
                 .title {
                     font-size: 20px;
@@ -99,14 +98,15 @@ body {
                     padding-bottom: 10px;
                 }
 
-                .activity {
-                    font-size: 18px;
-                    padding-bottom: 15px;
-                }
-
-                .time, .by {
+                .OP, .time {
                     font-size: 12px;
                     color: gray;
+                }
+
+                .instructions {
+                    font-size: 18px;
+                    padding-bottom: 15px;
+                    white-space: pre-wrap;
                 }
             }
         }
@@ -147,10 +147,10 @@ body {
             overflow-y: initial;
         }
 
-        .challenges-container {
+        .recipes-container {
             width: initial;
 
-            #my-challenges {
+            #my-recipes {
                 height: 100vh;
             }
         }
