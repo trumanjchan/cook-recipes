@@ -31,20 +31,7 @@ const saltRounds = 10;
         
 
         function getTimestamp() {
-            const time = new Date().toLocaleString('en-US', {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            });
-            const [date, timePart] = time.split(', ');
-            const [month, day, year] = date.split('/');
-            const timestamp = `${year}-${month}-${day} ${timePart}`;
-
-            return timestamp;
+            return new Date().toISOString();
         }
 
         app.use(express.static('public'));

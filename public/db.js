@@ -45,7 +45,7 @@ export const connectToDB = () => {
 					title VARCHAR(64),
 					instructions TEXT,
 					image_urls VARCHAR(500),
-					time TIMESTAMP
+					time VARCHAR(20)
 				);
 			`;
 			db.query(createRecipesTableSQL, (err) => {
