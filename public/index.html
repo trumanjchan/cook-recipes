@@ -162,8 +162,18 @@
                             div3.className = "time";
                             container.appendChild(div3);
 
+
+                            let instructions = recipe.instructions;
+                            const image_urls = JSON.parse(recipe.image_urls);
+                            for (const key in image_urls) {
+                                if (instructions.includes("[" + key + "]")) {
+                                    const pattern = new RegExp("\\[" + key + "\\]", "g");
+                                    instructions = instructions.replace(pattern, `<img src="${image_urls[key]}">`);
+                                }
+                            }
+
                             let pre = document.createElement('pre');
-                            pre.textContent = recipe.instructions;
+                            pre.innerHTML = instructions;
                             pre.className = "instructions";
                             container.appendChild(pre);
 
@@ -204,8 +214,18 @@
                                 div3.className = "time";
                                 container.appendChild(div3);
 
+
+                                let instructions = recipe.instructions;
+                                const image_urls = JSON.parse(recipe.image_urls);
+                                for (const key in image_urls) {
+                                    if (instructions.includes("[" + key + "]")) {
+                                        const pattern = new RegExp("\\[" + key + "\\]", "g");
+                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}">`);
+                                    }
+                                }
+
                                 let pre = document.createElement('pre');
-                                pre.textContent = recipe.instructions;
+                                pre.innerHTML = instructions;
                                 pre.className = "instructions";
                                 container.appendChild(pre);
 

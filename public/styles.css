@@ -94,19 +94,29 @@ body {
 
                 .title {
                     font-size: 20px;
+                    text-align: center;
                     font-weight: bold;
                     padding-bottom: 10px;
                 }
 
                 .OP, .time {
                     font-size: 12px;
+                    text-align: center;
                     color: gray;
                 }
 
                 .instructions {
                     font-size: 18px;
-                    padding-bottom: 15px;
+                    margin-bottom: 0;
                     white-space: pre-wrap;
+
+                    img {
+                        display: block;
+                        width: 80%;
+                        margin: 0 auto;
+                        aspect-ratio: 4 / 3;
+                        object-fit: contain;
+                    }
                 }
             }
         }
