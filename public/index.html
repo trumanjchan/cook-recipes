@@ -93,7 +93,6 @@
                     const OP = nick;
                     const titleInput = document.getElementById('new-recipe-title').value;
                     const instructionsInput = document.getElementById('new-recipe-instructions').value;
-                    document.getElementById('recipeErrors').innerHTML = '';
 
                     socket.emit('new-recipe', { OP, titleInput, instructionsInput, uploadedImgs });
                 }
@@ -262,14 +261,11 @@
                 document.getElementById('loginErrors').innerHTML = "Incorrect credentials!";
             })
 
-            socket.on('create-challenge-success', () => {
-                document.getElementById('title').value = '';
-                document.getElementById('activity').value = '';
-                document.getElementById('opponent').value = '';
-            })
-
-            socket.on('create-recipe-error', (msg) => {
-                document.getElementById('recipeErrors').innerHTML = msg;
+            socket.on('create-recipe-success', () => {
+                document.getElementById('new-recipe-title').value = '';
+                document.getElementById('new-recipe-instructions').value = '';
+                document.getElementById("uploaded-images").innerHTML = '';
+                document.getElementById("uploaded-images-object").innerHTML = '';
             })
 
             socket.on('display-all-users', () => {
@@ -298,12 +294,11 @@
                     <div>
                         <textarea id="new-recipe-title" placeholder="Recipe Name" required></textarea>
                         <textarea id="new-recipe-instructions" placeholder="[finalimgname]\n\nStep 1) Boil water\n[imgname1]\n\nStep 2) Cook noodles to al dente\n[imgname2]\n\netc." required ></textarea>
-                        <button type="button" id="upload_widget" class="cloudinary-button">Upload Photos</button>
-                        <button type="submit">Submit Recipe</button>
+                        <button type="button" id="upload_widget" class="cloudinary-button">Optional: Upload&nbsp;Photos<br>(jpg, jpeg, png)</button>
+                        <button type="submit" class="submit-button">Submit Recipe</button>
                         <div id="uploaded-images"></div>
                         <pre id="uploaded-images-object"></pre>
                     </div>
-                    <div id="recipeErrors"></div>
                 `;
                 document.getElementById("upload_widget").addEventListener("click", async function() {
                     const signatureData = await getSignature(nick);
@@ -317,7 +312,9 @@
                         use_filename: true,
                         unique_filename: false,
                         overwrite: true,
-                        sources: ['local']
+                        sources: ['local'],
+                        resourceType: "image",
+                        clientAllowedFormats: ["jpg", "jpeg", "png"]
                     }, (error, result) => {
                         if (!error && result && result.event === "success") {
                             const imageName = result.info.display_name;

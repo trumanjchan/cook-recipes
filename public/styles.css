@@ -49,6 +49,15 @@ body {
                 box-sizing: border-box;
             }
 
+            .cloudinary-button {
+                line-height: normal;
+            }
+
+            .submit-button {
+                font-size: 14px;
+                padding: 10px 14px;
+            }
+
             #uploaded-images {
                 overflow-x: auto;
             }
@@ -162,6 +171,10 @@ body {
 
             #my-recipes {
                 height: 100vh;
+
+                .recipe {
+                    width: 85%;
+                }
             }
         }
 
