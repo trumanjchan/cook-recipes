@@ -79,6 +79,12 @@ const saltRounds = 10;
             });
         });
 
+        app.get('/recent-recipes', (req, res) => {
+            db.query(`SELECT * FROM recipes ORDER BY time LIMIT 10;`, (err, results) => {
+                res.json(results);
+            });
+        });
+
         app.get('/:nickname/recipes', async (req, res) => {
             try {
                 const [userRecipes] = await db.promise().query(`SELECT * FROM recipes WHERE OP = ?`, [req.params.nickname]);
@@ -91,8 +97,9 @@ const saltRounds = 10;
         });
 
         io.on('connection', (socket) => {
-            socket.emit('display-all-users');
             console.log('a user connected');
+            socket.emit('display-all-users');
+            socket.emit('display-recent-recipes');
 
             socket.on('user', (data) => {
                 var bool = false;
@@ -142,7 +149,7 @@ const saltRounds = 10;
                     console.log(data.OP + " shared recipe: " + data.titleInput);
 
                     socket.emit('display-my-recipes');
-                    //socket.broadcast.emit('display-my-recipes');
+                    socket.broadcast.emit('display-recent-recipes');
                     //socket.emit('create-challenge-success');
                     io.emit('server-announcement', `${data.OP} shared recipe: ${data.titleInput}`);
 
