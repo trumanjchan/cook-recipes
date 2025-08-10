@@ -98,9 +98,9 @@
                 }
             })
 
-            function challengeDone(challengeTitle) {
+            function recipeDelete(recipeTitle) {
                 if (verified) {
-                    socket.emit('challenge-done', { challengeTitle, nick });
+                    socket.emit('recipe-delete', { recipeTitle, nick });
                 }
             }
 
@@ -124,6 +124,7 @@
                             div.textContent = user.name;
                             if (user.is_online) {
                                 div.style.color = "rgb(19, 115, 51)";
+                                div.style.backgroundColor = "#a7ffc5";
                             }
                             container.appendChild(div);
                         });
@@ -213,6 +214,15 @@
                                 div3.className = "time";
                                 container.appendChild(div3);
 
+                                if (recipe.OP == nick) {
+                                    let OPbuttons = document.createElement('div');
+                                    OPbuttons.className = "OP-buttons";
+                                    OPbuttons.innerHTML = `
+                                        <button onclick="recipeUpdate('${recipe.title}')">Edit</button>
+                                        <button onclick="recipeDelete('${recipe.title}')">Delete</button>
+                                    `;
+                                    container.appendChild(OPbuttons);
+                                }
 
                                 let instructions = recipe.instructions;
                                 const image_urls = JSON.parse(recipe.image_urls);
@@ -228,14 +238,6 @@
                                 pre.className = "instructions";
                                 container.appendChild(pre);
 
-                                /*if (!recipe.inProgress[0] || recipe.inProgress[0].name !== nick) {
-                                    let button = document.createElement('button');
-                                    button.innerHTML = "Done";
-                                    button.onclick = function() {
-                                        challengeDone(recipe.title);
-                                    };
-                                    container.appendChild(button);
-                                }*/
 
                                 myRecipes.appendChild(container);
                             });
@@ -293,7 +295,7 @@
                 document.getElementById("recipeForm").innerHTML = `
                     <div>
                         <textarea id="new-recipe-title" placeholder="Recipe Name" required></textarea>
-                        <textarea id="new-recipe-instructions" placeholder="[finalimgname]\n\nStep 1) Boil water\n[imgname1]\n\nStep 2) Cook noodles to al dente\n[imgname2]\n\netc." required ></textarea>
+                        <textarea id="new-recipe-instructions" placeholder="[finalimgname]\n\nStep 1) Boil water\n[imgname1]\n\nStep 2) Cook noodles to al dente\n[imgname2]\n\netc.\n\n" required ></textarea>
                         <button type="button" id="upload_widget" class="cloudinary-button">Optional: Upload&nbsp;Photos<br>(jpg, jpeg, png)</button>
                         <button type="submit" class="submit-button">Submit Recipe</button>
                         <div id="uploaded-images"></div>

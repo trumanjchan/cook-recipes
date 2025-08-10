@@ -158,26 +158,17 @@ const saltRounds = 10;
                 }
             })
 
-            socket.on('challenge-done', async (data) => {
+            socket.on('recipe-delete', async (data) => {
                 try {
-                    const [challengeId] = await db.promise().query(`SELECT id FROM challenges WHERE title = ?`, [data.challengeTitle]);
+                    await db.promise().query(`DELETE FROM recipes WHERE title = ?`, [data.recipeTitle]);
+                    console.log(data.nick + " deleted recipe: " + data.recipeTitle);
 
-                    await db.promise().query(`INSERT INTO in_progress (name, time, challenge_id) VALUES (?, ?, ?)`, [data.nick, getTimestamp(), challengeId[0].id]);
-                    socket.emit('display-my-challenges');
-                    socket.broadcast.emit('display-my-challenges');
-
-                    const [complete] = await db.promise().query(`SELECT * FROM in_progress WHERE challenge_id = ?`, [challengeId[0].id]);
-                    if (complete.length === 2) {
-                        await db.promise().query(`DELETE FROM challenges WHERE title = ?`, [data.challengeTitle]);
-                        await db.promise().query(`DELETE FROM in_progress WHERE challenge_id = ?`, [challengeId]);
-                        io.emit('server-announcement', `${data.nick} completed ${data.challengeTitle}! Challenge complete.`);
-                        console.log(`${data.nick} completed ${data.challengeTitle}! Challenge complete.`);
-                    } else {
-                        io.emit('server-announcement', `${data.nick} completed ${data.challengeTitle}! Challenge still exists.`);
-                        console.log(`${data.nick} completed ${data.challengeTitle}! Challenge still exists.`);
-                    }
+                    socket.emit('display-my-recipes');
+                    socket.broadcast.emit('display-recent-recipes');
+                    io.emit('server-announcement', `${data.nick} deleted recipe: ${data.recipeTitle}`);
                 } catch (err) {
-                    console.log("Error with challenge-done on server!")
+                    console.log(err);
+                    socket.emit('server-announcement', err);
                 }
             })
 

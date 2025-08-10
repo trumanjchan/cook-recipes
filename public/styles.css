@@ -114,6 +114,13 @@ body {
                     color: gray;
                 }
 
+                .OP-buttons {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 15px;
+                }
+
                 .instructions {
                     font-size: 18px;
                     margin-bottom: 0;
