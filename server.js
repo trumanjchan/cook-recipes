@@ -174,20 +174,21 @@ const saltRounds = 10;
 
             socket.on('delete-account', async (nick) => {
                 try {
-                    const [myId] = await db.promise().query(`SELECT id FROM users WHERE name = ?`, [nick]);
-                    const [challenge_ids] = await db.promise().query(`SELECT challenge_id FROM challenge_user WHERE user_id = ?`, [myId[0].id]);
+                    const [recipes] = await db.promise().query(`SELECT * FROM recipes WHERE OP = ?`, [nick]);
 
-                    for (const c of challenge_ids) {
-                        await db.promise().query(`DELETE FROM challenges WHERE id = ?`, [c.challenge_id]);
+                    for (const r of recipes) {
+                        await db.promise().query(`UPDATE recipes SET OP = "" WHERE OP = ?`, [nick]);
                     }
 
                     await db.promise().query(`DELETE FROM users WHERE name = ?`, [nick]);
+
                     socket.emit('reload');
-                    socket.broadcast.emit('display-my-challenges');
+                    socket.broadcast.emit('display-recent-recipes');
                     io.emit('server-announcement', `${nick} deleted their account!`);
                     console.log(`${nick} deleted their account!`);
                 } catch (err) {
-                    console.log("Error when deleting " + nick + ": " + err);
+                    console.log(err);
+                    socket.emit('server-announcement', err);
                 }
             });
 
