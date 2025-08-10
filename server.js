@@ -20,6 +20,16 @@ const saltRounds = 10;
         await connectToDB();
         await db.promise().query("SELECT 1");
 
+        setInterval(async () => {
+            try {
+                await db.promise().query('SELECT 1');
+                console.log("Pinged DB to keep it warm");
+            } catch (err) {
+                console.error("Ping failed:", err);
+            }
+        }, 4 * 60 * 1000);
+        
+
         function getTimestamp() {
             const time = new Date().toLocaleString('en-US', {
                 year: "numeric",
