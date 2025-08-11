@@ -28,11 +28,7 @@ const saltRounds = 10;
                 console.error("Ping failed:", err);
             }
         }, 4 * 60 * 1000);
-        
 
-        function getTimestamp() {
-            return new Date().toISOString();
-        }
 
         app.use(express.static('public'));
 
@@ -142,7 +138,7 @@ const saltRounds = 10;
 
             socket.on('recipe-create', async (data) => {
                 try {
-                    await db.promise().query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), getTimestamp()]);
+                    await db.promise().query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), new Date().toISOString().slice(0, 19).replace('T', ' ')]);
                     console.log(data.OP + " shared recipe: " + data.titleInput);
 
                     socket.emit('display-my-recipes');
