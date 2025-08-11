@@ -124,18 +124,9 @@
                     document.getElementById('new-recipe-title').value = origTitle;
                     document.getElementById('new-recipe-instructions').value = origInstructions;
 
-                    const date = new Date(origTime);
-                    const pad = n => (n < 10 ? '0' + n : n);
-                    const formatted = 
-                        date.getFullYear() + '-' +
-                        pad(date.getMonth() + 1) + '-' +
-                        pad(date.getDate()) + ' ' +
-                        pad(date.getHours()) + ':' +
-                        pad(date.getMinutes()) + ':' +
-                        pad(date.getSeconds());
                     origRecipe["origTitle"] = origTitle;
                     origRecipe["origOP"] = origOP;
-                    origRecipe["origTime"] = formatted;
+                    origRecipe["origTime"] = new Date(origTime).toISOString().replace('T', ' ').replace('.000Z', '');
                     origRecipe["origInstructions"] = origInstructions;
                 }
             }
