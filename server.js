@@ -28,7 +28,7 @@ const saltRounds = 10;
                 console.error("Ping failed:", err);
             }
         }, 4 * 60 * 1000);
-        
+
 
         function getTimestamp() {
             const time = new Date().toLocaleString('en-US', {

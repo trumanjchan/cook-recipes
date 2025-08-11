@@ -177,54 +177,55 @@
             }
 
             function displayRecentRecipes() {
-                fetch(`/recent-recipes`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
+                if (!verified) {
+                    fetch(`/recent-recipes`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
 
-                        const allRecipes = document.getElementById('my-recipes');
-                        allRecipes.innerHTML = '';
+                            const allRecipes = document.getElementById('my-recipes');
+                            allRecipes.innerHTML = '';
 
-                        data.reverse().forEach(recipe => {
-                            let container = document.createElement('div');
-                            container.className = "recipe";
+                            data.reverse().forEach(recipe => {
+                                let container = document.createElement('div');
+                                container.className = "recipe";
 
-                            let div1 = document.createElement('div');
-                            div1.textContent = recipe.title;
-                            div1.className = "title";
-                            container.appendChild(div1);
+                                let div1 = document.createElement('div');
+                                div1.textContent = recipe.title;
+                                div1.className = "title";
+                                container.appendChild(div1);
 
-                            let div2 = document.createElement('div');
-                            div2.textContent = recipe.OP;
-                            div2.className = "OP";
-                            container.appendChild(div2);
+                                let div2 = document.createElement('div');
+                                div2.textContent = recipe.OP;
+                                div2.className = "OP";
+                                container.appendChild(div2);
 
-                            let div3 = document.createElement('div');
-                            const date = new Date(recipe.time);
-                            const localTz = date.toLocaleString();
-                            div3.textContent = localTz;
-                            div3.className = "time";
-                            container.appendChild(div3);
+                                let div3 = document.createElement('div');
+                                const date = new Date(recipe.time);
+                                const localTz = date.toLocaleString();
+                                div3.textContent = localTz;
+                                div3.className = "time";
+                                container.appendChild(div3);
 
-
-                            let instructions = recipe.instructions;
-                            const image_urls = JSON.parse(recipe.image_urls);
-                            for (const key in image_urls) {
-                                if (instructions.includes("[" + key + "]")) {
-                                    const pattern = new RegExp("\\[" + key + "\\]", "g");
-                                    instructions = instructions.replace(pattern, `<img src="${image_urls[key]}">`);
+                                let instructions = recipe.instructions;
+                                const image_urls = JSON.parse(recipe.image_urls);
+                                for (const key in image_urls) {
+                                    if (instructions.includes("[" + key + "]")) {
+                                        const pattern = new RegExp("\\[" + key + "\\]", "g");
+                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}">`);
+                                    }
                                 }
-                            }
 
-                            let pre = document.createElement('pre');
-                            pre.innerHTML = instructions;
-                            pre.className = "instructions";
-                            container.appendChild(pre);
+                                let pre = document.createElement('pre');
+                                pre.innerHTML = instructions;
+                                pre.className = "instructions";
+                                container.appendChild(pre);
 
-                            allRecipes.appendChild(container);
-                        });
-                    })
-                    .catch(error => console.error(`Error fetching /recent-recipes :`, error));
+                                allRecipes.appendChild(container);
+                            });
+                        })
+                        .catch(error => console.error(`Error fetching /recent-recipes :`, error));
+                }
             }
 
             function displayMyRecipes() {
