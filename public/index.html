@@ -41,7 +41,10 @@
             const socket = io();
             var verified = false;
             var nick = '';
-            const uploadedImgs = {};
+
+            var uploadedImgs = {};
+            var origRecipe = {};
+            
 
             document.getElementById('loginForm').addEventListener('submit', (event) => {
                 event.preventDefault();
@@ -94,9 +97,48 @@
                     const titleInput = document.getElementById('new-recipe-title').value;
                     const instructionsInput = document.getElementById('new-recipe-instructions').value;
 
-                    socket.emit('new-recipe', { OP, titleInput, instructionsInput, uploadedImgs });
+                    if (Object.keys(origRecipe).length > 0) {
+                        socket.emit('recipe-update', { origRecipe, titleInput, instructionsInput, uploadedImgs });
+
+                        origRecipe = {};
+                    } else {
+                        socket.emit('recipe-create', { OP, titleInput, instructionsInput, uploadedImgs });
+                    }
                 }
             })
+
+            function recipeUpdate(e) {
+                if (verified) {
+                    const parent = e.target.parentElement.parentElement;
+                    const siblings = Array.from(parent.children);
+
+                    const origTitle = siblings[0].innerHTML;
+                    const origOP = siblings[1].innerHTML;
+                    const origTime = siblings[2].innerHTML;
+                    const origInstructions = siblings[4].innerHTML.replace(/<img[^>]*src=["']([^"']+)["'][^>]*>/g, (match, src) => {
+                        const filenameWithExt = src.split('/').pop();
+                        const filename = filenameWithExt.replace(/\.[^/.]+$/, "");
+
+                        return `[${filename}]`;
+                    });
+                    document.getElementById('new-recipe-title').value = origTitle;
+                    document.getElementById('new-recipe-instructions').value = origInstructions;
+
+                    const date = new Date(origTime);
+                    const pad = n => (n < 10 ? '0' + n : n);
+                    const formatted = 
+                        date.getFullYear() + '-' +
+                        pad(date.getMonth() + 1) + '-' +
+                        pad(date.getDate()) + ' ' +
+                        pad(date.getHours()) + ':' +
+                        pad(date.getMinutes()) + ':' +
+                        pad(date.getSeconds());
+                    origRecipe["origTitle"] = origTitle;
+                    origRecipe["origOP"] = origOP;
+                    origRecipe["origTime"] = formatted;
+                    origRecipe["origInstructions"] = origInstructions;
+                }
+            }
 
             function recipeDelete(recipeTitle) {
                 if (verified) {
@@ -218,7 +260,7 @@
                                     let OPbuttons = document.createElement('div');
                                     OPbuttons.className = "OP-buttons";
                                     OPbuttons.innerHTML = `
-                                        <button onclick="recipeUpdate('${recipe.title}')">Edit</button>
+                                        <button onclick="recipeUpdate(event)">Edit</button>
                                         <button onclick="recipeDelete('${recipe.title}')">Delete</button>
                                     `;
                                     container.appendChild(OPbuttons);
@@ -268,6 +310,7 @@
                 document.getElementById('new-recipe-instructions').value = '';
                 document.getElementById("uploaded-images").innerHTML = '';
                 document.getElementById("uploaded-images-object").innerHTML = '';
+                uploadedImgs = {};
             })
 
             socket.on('display-all-users', () => {

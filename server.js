@@ -140,7 +140,7 @@ const saltRounds = 10;
                 });
             });
 
-            socket.on('new-recipe', async (data) => {
+            socket.on('recipe-create', async (data) => {
                 try {
                     await db.promise().query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), getTimestamp()]);
                     console.log(data.OP + " shared recipe: " + data.titleInput);
@@ -149,6 +149,21 @@ const saltRounds = 10;
                     socket.broadcast.emit('display-recent-recipes');
                     socket.emit('create-recipe-success');
                     io.emit('server-announcement', `${data.OP} shared recipe: ${data.titleInput}`);
+                } catch (err) {
+                    console.log(err);
+                    socket.emit('server-announcement', err);
+                }
+            })
+
+            socket.on('recipe-update', async (data) => {
+                try {
+                    await db.promise().query(`UPDATE recipes SET title = ?, instructions = ?, image_urls = ? WHERE OP = ? AND title = ? AND instructions = ? AND time = ?`, [data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), data.origRecipe.origOP, data.origRecipe.origTitle, data.origRecipe.origInstructions, data.origRecipe.origTime]);
+                    console.log(data.origRecipe.origOP + " updated recipe: " + data.origRecipe.origTitle);
+
+                    socket.emit('display-my-recipes');
+                    socket.broadcast.emit('display-recent-recipes');
+                    socket.emit('create-recipe-success');
+                    io.emit('server-announcement', `${data.origRecipe.origOP} updated recipe: ${data.origRecipe.origTitle}`);
                 } catch (err) {
                     console.log(err);
                     socket.emit('server-announcement', err);
