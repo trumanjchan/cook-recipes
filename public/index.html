@@ -119,6 +119,8 @@
                         const filenameWithExt = src.split('/').pop();
                         const filename = filenameWithExt.replace(/\.[^/.]+$/, "");
 
+                        uploadedImgs[filename] = src;
+
                         return `[${filename}]`;
                     });
                     document.getElementById('new-recipe-title').value = origTitle;
