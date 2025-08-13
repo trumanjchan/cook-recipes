@@ -72,8 +72,8 @@ const saltRounds = 10;
             });
         });
 
-        app.get('/recent-recipes', (req, res) => {
-            db.query(`SELECT * FROM recipes ORDER BY time LIMIT 10;`, (err, results) => {
+        app.get('/all-recipes', (req, res) => {
+            db.query(`SELECT * FROM recipes ORDER BY time;`, (err, results) => {
                 res.json(results);
             });
         });
@@ -92,7 +92,7 @@ const saltRounds = 10;
         io.on('connection', (socket) => {
             console.log('a user connected');
             socket.emit('display-all-users');
-            socket.emit('display-recent-recipes');
+            socket.emit('display-all-recipes');
 
             socket.on('user', (data) => {
                 var bool = false;
@@ -142,7 +142,7 @@ const saltRounds = 10;
                     console.log(data.OP + " shared recipe: " + data.titleInput);
 
                     socket.emit('display-my-recipes');
-                    socket.broadcast.emit('display-recent-recipes');
+                    socket.broadcast.emit('display-all-recipes');
                     socket.emit('create-recipe-success');
                     io.emit('server-announcement', `${data.OP} shared recipe: ${data.titleInput}`);
                 } catch (err) {
@@ -157,7 +157,7 @@ const saltRounds = 10;
                     console.log(data.origRecipe.origOP + " updated recipe: " + data.origRecipe.origTitle);
 
                     socket.emit('display-my-recipes');
-                    socket.broadcast.emit('display-recent-recipes');
+                    socket.broadcast.emit('display-all-recipes');
                     socket.emit('create-recipe-success');
                     io.emit('server-announcement', `${data.origRecipe.origOP} updated recipe: ${data.origRecipe.origTitle}`);
                 } catch (err) {
@@ -172,7 +172,7 @@ const saltRounds = 10;
                     console.log(data.nick + " deleted recipe: " + data.recipeTitle);
 
                     socket.emit('display-my-recipes');
-                    socket.broadcast.emit('display-recent-recipes');
+                    socket.broadcast.emit('display-all-recipes');
                     io.emit('server-announcement', `${data.nick} deleted recipe: ${data.recipeTitle}`);
                 } catch (err) {
                     console.log(err);
@@ -191,7 +191,7 @@ const saltRounds = 10;
                     await db.promise().query(`DELETE FROM users WHERE name = ?`, [nick]);
 
                     socket.emit('reload');
-                    socket.broadcast.emit('display-recent-recipes');
+                    socket.broadcast.emit('display-all-recipes');
                     io.emit('server-announcement', `${nick} deleted their account!`);
                     console.log(`${nick} deleted their account!`);
                 } catch (err) {
