@@ -176,13 +176,11 @@
                     .catch(error => console.error(`Error fetching /all-users :`, error));
             }
 
-            function displayRecentRecipes() {
+            function displayAllRecipes() {
                 if (!verified) {
-                    fetch(`/recent-recipes`)
+                    fetch(`/all-recipes`)
                         .then(response => response.json())
                         .then(data => {
-                            console.log(data);
-
                             const allRecipes = document.getElementById('my-recipes');
                             allRecipes.innerHTML = '';
 
@@ -212,7 +210,7 @@
                                 for (const key in image_urls) {
                                     if (instructions.includes("[" + key + "]")) {
                                         const pattern = new RegExp("\\[" + key + "\\]", "g");
-                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}">`);
+                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}" alt="${key}" loading="lazy">`);
                                     }
                                 }
 
@@ -224,7 +222,7 @@
                                 allRecipes.appendChild(container);
                             });
                         })
-                        .catch(error => console.error(`Error fetching /recent-recipes :`, error));
+                        .catch(error => console.error(`Error fetching /all-recipes :`, error));
                 }
             }
 
@@ -233,8 +231,6 @@
                     fetch(`/${nick}/recipes`)
                         .then(response => response.json())
                         .then(data => {
-                            console.log(data);
-
                             const myRecipes = document.getElementById('my-recipes');
                             myRecipes.innerHTML = '';
 
@@ -274,7 +270,7 @@
                                 for (const key in image_urls) {
                                     if (instructions.includes("[" + key + "]")) {
                                         const pattern = new RegExp("\\[" + key + "\\]", "g");
-                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}">`);
+                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}" alt="${key}" loading="lazy">`);
                                     }
                                 }
 
@@ -320,8 +316,8 @@
                 displayUsersList();
             })
 
-            socket.on('display-recent-recipes', () => {
-                displayRecentRecipes();
+            socket.on('display-all-recipes', () => {
+                displayAllRecipes();
             })
 
             socket.on('display-my-recipes', () => {
