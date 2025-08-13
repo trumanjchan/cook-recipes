@@ -201,7 +201,13 @@
                                 for (const key in image_urls) {
                                     if (instructions.includes("[" + key + "]")) {
                                         const pattern = new RegExp("\\[" + key + "\\]", "g");
-                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}" alt="${key}" loading="lazy">`);
+
+                                        const transformedUrl = image_urls[key].replace(
+                                            "/upload/",
+                                            "/upload/w_520,c_fit,q_auto,f_webp/"
+                                        );
+
+                                        instructions = instructions.replace(pattern, `<img src="${transformedUrl}" alt="${key}" loading="lazy">`);
                                     }
                                 }
 
@@ -261,7 +267,13 @@
                                 for (const key in image_urls) {
                                     if (instructions.includes("[" + key + "]")) {
                                         const pattern = new RegExp("\\[" + key + "\\]", "g");
-                                        instructions = instructions.replace(pattern, `<img src="${image_urls[key]}" alt="${key}" loading="lazy">`);
+
+                                        const transformedUrl = image_urls[key].replace(
+                                            "/upload/",
+                                            "/upload/w_520,c_fit,q_auto,f_webp/"
+                                        );
+
+                                        instructions = instructions.replace(pattern, `<img src="${transformedUrl}" alt="${key}" loading="lazy">`);
                                     }
                                 }
 
@@ -349,7 +361,7 @@
                         overwrite: true,
                         sources: ['local'],
                         resourceType: "image",
-                        clientAllowedFormats: ["jpg", "jpeg", "png"]
+                        clientAllowedFormats: ["jpg", "jpeg", "png", "webp"]
                     }, (error, result) => {
                         if (!error && result && result.event === "success") {
                             const imageName = result.info.display_name;
