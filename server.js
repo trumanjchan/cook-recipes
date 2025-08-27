@@ -29,24 +29,6 @@ const saltRounds = 10;
             }
         }, 4 * 60 * 1000);
 
-
-        function getTimestamp() {
-            const time = new Date().toLocaleString('en-US', {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            });
-            const [date, timePart] = time.split(', ');
-            const [month, day, year] = date.split('/');
-            const timestamp = `${year}-${month}-${day} ${timePart}`;
-
-            return timestamp;
-        }
-
         app.use(express.static('public'));
 
         app.get('/api/sign-upload', (req, res) => {
@@ -165,7 +147,7 @@ const saltRounds = 10;
 
             socket.on('recipe-create', async (data) => {
                 try {
-                    await db.query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), getTimestamp()]);
+                    await db.query(`INSERT INTO recipes (OP, title, instructions, image_urls, time) VALUES (?, ?, ?, ?, ?)`, [data.OP, data.titleInput, data.instructionsInput, JSON.stringify(data.uploadedImgs), new Date().toISOString().slice(0, 19).replace('T', ' ')]);
                     console.log(data.OP + " shared recipe: " + data.titleInput);
 
                     socket.emit('display-my-recipes');
