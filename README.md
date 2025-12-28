@@ -1,5 +1,8 @@
 # Cook Recipes
-Making a recipe website had been on my mind for awhile. It wasn't until recently that my database (brain) started to have more than just a few recipes stored. Before I would save a rough list of ingredients needed for certain recipes on my phone or save chrome tabs or instagram reels, or just rely on memory. I created this to immortalize recipes that I have made and can vouch for, and to hopefully motivate my friends to try a new dish today.
+
+<img src="assets/demo.gif" alt="demo gif" width="100%">
+
+Making a recipe website had been on my mind for awhile. It wasn't until recently that I began expanding my library of recipes and needed a medium to store them all. Before I would save a rough list of ingredients needed for certain recipes on my phone or save chrome tabs or instagram reels, or just rely on memory. I created this to immortalize recipes that I have made and can vouch for, and to hopefully motivate my friends to try a new dish today.
 
 ### Features
 - MySQL Database - nicknames, passwords, and recipes are stored

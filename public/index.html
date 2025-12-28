@@ -8,6 +8,12 @@
     </head>
 
     <body>
+        <div id="modal">
+            <div class="modal-container">
+                <div id="modal-content"></div>
+            </div>
+        </div>
+
         <div class="info-container">
             <form id="loginForm">
                 <div>
@@ -140,9 +146,14 @@
             }
 
             function deleteAccount() {
-                if (verified) {
-                    socket.emit('delete-account', nick);
-                }
+                document.getElementById('modal').style.visibility = 'visible';
+                document.getElementById('modal-content').innerHTML = `
+                    <div>Are you sure you want to delete your account?<br>This action is irreversible.</div>
+                    <div style="display: flex; flex-direction: column; gap: 15px; padding-top: 20px;">
+                        <button onclick="document.getElementById('modal').style.visibility='hidden';">Cancel</button>
+                        <button onclick="if (verified) { socket.emit('delete-account', nick); }">Yes, Delete<br>${nick}</button>
+                    </div>
+                `;
             }
 
             function displayUsersList() {
@@ -386,7 +397,10 @@
                 }, false);
                 document.getElementById("welcome").innerHTML = `
                     <div>Welcome, ${nick}!</div>
-                    <button onclick="deleteAccount()">Delete Account</button>
+                    <div class="user-actions">
+                        <!-- <button onclick="updatePassword()">Update Password</button> -->
+                        <button onclick="deleteAccount()">Delete Account</button>
+                    </div>
                 `;
 
                 displayUsersList();
