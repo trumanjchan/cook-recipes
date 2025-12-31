@@ -105,8 +105,6 @@ const saltRounds = 10;
 
             socket.on('user', async (data) => {
                 try {
-                    var bool = false;
-
                     const [results] = await db.query(`SELECT * FROM users WHERE name = ?`, [data.nickname]);
                     const nickname = data.nickname;
                     const normalized = nickname.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
@@ -117,7 +115,7 @@ const saltRounds = 10;
                         socket.nickname = nickname;
 
                         if (results.length > 0) {
-                            bool = bcrypt.compareSync(data.password, results[0].password);
+                            const bool = bcrypt.compareSync(data.password, results[0].password);
                             if (bool) {
                                 await db.query(`UPDATE users SET is_online = ? WHERE name = ?`, [true, socket.nickname]);
                                 socket.emit('logged-in', socket.nickname);
@@ -188,6 +186,29 @@ const saltRounds = 10;
                     socket.emit('server-announcement', err);
                 }
             })
+
+            socket.on('update-password', async (data) => {
+                try {
+                    const [results] = await db.query(`SELECT * FROM users WHERE name = ?`, [data.nick]);
+
+                    if (results.length > 0) {
+                        const bool = bcrypt.compareSync(data.currentPassword, results[0].password);
+                        if (bool) {
+                            const hash = bcrypt.hashSync(data.newPassword, saltRounds);
+                            await db.query(`UPDATE users SET password = ? WHERE name = ?`, [hash, data.nick]);
+                            
+                            socket.emit('close-modal');
+                            socket.emit('server-announcement', `Your password has been updated successfully.`);
+                            console.log(`${data.nick} updated their password.`);
+                        } else {
+                            socket.emit('incorrect-current-password');
+                        }
+                    }
+                } catch (err) {
+                    console.log(err);
+                    socket.emit('server-announcement', err);
+                }
+            });
 
             socket.on('delete-account', async (nick) => {
                 try {

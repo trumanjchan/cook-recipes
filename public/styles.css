@@ -17,15 +17,25 @@ body {
         
         background-color: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(10px);
-        padding: 20px;
 
         .modal-container {
             align-self: center;
-            text-align: center;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             border-radius: 15px;
             padding: 20px;
+            position: relative;
+
+            .close-out-button {
+                font-size: 50px;
+                width: fit-content;
+                margin-left: auto;
+                line-height: 1;
+                cursor: pointer;
+                position: absolute;
+                top: -6.5px;
+                right: 10px;
+            }
 
             #modal-content {
                 text-align: center;

@@ -8,8 +8,9 @@
     </head>
 
     <body>
-        <div id="modal">
-            <div class="modal-container">
+        <div id="modal" onclick="document.getElementById('modal').style.visibility='hidden';">
+            <div class="modal-container" onclick="event.stopPropagation();">
+                <div class="close-out-button" onclick="document.getElementById('modal').style.visibility='hidden';">&times;</div>
                 <div id="modal-content"></div>
             </div>
         </div>
@@ -145,14 +146,23 @@
                 }
             }
 
+            function updatePassword() {
+                document.getElementById('modal').style.visibility = 'visible';
+                document.getElementById('modal-content').innerHTML = `
+                    <div style="padding: 20px 0; display: flex; flex-direction: column; gap: 10px;">
+                        <input type="password" id="current-password" placeholder="current password" required />
+                        <input type="password" id="new-password" placeholder="new password" required />
+                    </div>
+                    <button onclick="if (verified) { socket.emit('update-password', { nick, currentPassword: document.getElementById('current-password').value, newPassword: document.getElementById('new-password').value }); }">Update</button>
+                    <div id="currentPasswordError"></div>
+                `;
+            }
+
             function deleteAccount() {
                 document.getElementById('modal').style.visibility = 'visible';
                 document.getElementById('modal-content').innerHTML = `
-                    <div>Are you sure you want to delete your account?<br>This action is irreversible.</div>
-                    <div style="display: flex; flex-direction: column; gap: 15px; padding-top: 20px;">
-                        <button onclick="document.getElementById('modal').style.visibility='hidden';">Cancel</button>
-                        <button onclick="if (verified) { socket.emit('delete-account', nick); }">Yes, Delete<br>${nick}</button>
-                    </div>
+                    <div style="padding: 20px 0;">Are you sure you want to delete your account?<br>This action is irreversible.</div>
+                    <button onclick="if (verified) { socket.emit('delete-account', nick); }">Yes, Delete<br>${nick}</button>
                 `;
             }
 
@@ -301,6 +311,10 @@
                 }
             }
 
+            socket.on('close-modal', () => {
+                document.getElementById('modal').style.visibility = 'hidden';
+            })
+
             socket.on('reload', () => {
                 location.reload();
             })
@@ -312,6 +326,10 @@
                     line.textContent = msg;
                     container.prepend(line);
                 }
+            })
+
+            socket.on('incorrect-current-password', () => {
+                document.getElementById('currentPasswordError').innerHTML = "Your current password is incorrect!";
             })
 
             socket.on('incorrect-login', () => {
@@ -398,7 +416,7 @@
                 document.getElementById("welcome").innerHTML = `
                     <div>Welcome, ${nick}!</div>
                     <div class="user-actions">
-                        <!-- <button onclick="updatePassword()">Update Password</button> -->
+                        <button onclick="updatePassword()">Update Password</button>
                         <button onclick="deleteAccount()">Delete Account</button>
                     </div>
                 `;
